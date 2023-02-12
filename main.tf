@@ -20,7 +20,7 @@ provider "github" {
 }
 
 resource "aws_iam_role" "aws_access" {
-  name = "jenkins-project-role"
+  name = "jenkins-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -35,11 +35,10 @@ resource "aws_iam_role" "aws_access" {
     ]
   })
   managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess", "arn:aws:iam::aws:policy/AmazonEC2FullAccess", "arn:aws:iam::aws:policy/IAMFullAccess", "arn:aws:iam::aws:policy/AmazonS3FullAccess"]
-
 }
 
-resource "aws_iam_instance_profile" "ec2-profile" {
-  name = "jenkins-project-profile"
+resource "aws_iam_instance_profile" "jenkins-profile" {
+  name = "jenkins-profile"
   role = aws_iam_role.aws_access.name
 }
 
@@ -47,8 +46,8 @@ resource "aws_instance" "jenkins-server" {
   ami                    = var.myami
   instance_type          = var.instancetype
   key_name               = var.mykey
-  vpc_security_group_ids = [aws_security_group.jenkins-sec-gr.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2-profile.name
+  vpc_security_group_ids = [aws_security_group.jenkins-sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.jenkins-profile.name
   tags = {
     Name = var.tag
   }
@@ -56,7 +55,7 @@ resource "aws_instance" "jenkins-server" {
 
 }
 
-resource "aws_security_group" "jenkins-sec-gr" {
+resource "aws_security_group" "jenkins-sg" {
   name = var.jenkins-sg
   tags = {
     Name = var.jenkins-sg
@@ -105,13 +104,13 @@ resource "aws_s3_bucket_acl" "jenkins-acl" {
 }
 
 resource "github_repository" "git_repo" {
-  name       = "Jenkins-project"
+  name       = var.project_github_repo_name
   visibility = "public"
   auto_init  = true
 }
 
 resource "null_resource" "git_clone" {
   provisioner "local-exec" {
-    command = "git clone https://github.com/ycetindil/${github_repository.git_repo.name}.git ../${github_repository.git_repo.name}"
+    command = "git clone https://github.com/${github_username}/${github_repository.git_repo.name}.git ../${github_repository.git_repo.name}"
   }
 }

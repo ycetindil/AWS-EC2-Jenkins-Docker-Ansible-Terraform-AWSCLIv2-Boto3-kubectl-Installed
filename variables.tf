@@ -15,5 +15,13 @@ variable "tag" {
 }
 
 variable "jenkins-sg" {
-  default = "jenkins-sec-gr"
+  default = "jenkins-sg"
+}
+
+variable "project_github_repo_name" {
+  default = "Jenkins-project"
+}
+
+variable "github_username" {
+  default = "ycetindil"
 }
