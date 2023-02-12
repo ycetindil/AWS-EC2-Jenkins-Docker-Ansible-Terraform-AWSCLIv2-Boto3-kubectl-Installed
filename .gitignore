@@ -5,6 +5,12 @@
 *.tfstate
 *.tfstate.*
 
+# GitHub token
+github_token
+
+# pem files
+*.pem
+
 # Crash log files
 crash.log
 
