@@ -112,6 +112,6 @@ resource "github_repository" "git_repo" {
 
 resource "null_resource" "git_clone" {
   provisioner "local-exec" {
-    command = "git clone https://github.com/oguzhanaydogan/${github_repository.git_repo.name}.git ../${github_repository.git_repo.name}"
+    command = "git clone https://github.com/ycetindil/${github_repository.git_repo.name}.git ../${github_repository.git_repo.name}"
   }
 }
