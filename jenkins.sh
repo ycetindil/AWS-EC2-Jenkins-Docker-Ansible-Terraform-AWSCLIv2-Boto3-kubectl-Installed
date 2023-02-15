@@ -47,7 +47,8 @@ unzip awscliv2.zip
 amazon-linux-extras install ansible2 -y
 
 # Install boto3
-yum install python-boto3 -y
+yum install pip -y
+pip install boto3 botocore
 
 # Install terraform
 yum install -y yum-utils

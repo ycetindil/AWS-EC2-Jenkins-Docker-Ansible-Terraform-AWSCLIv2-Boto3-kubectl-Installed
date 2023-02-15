@@ -4,19 +4,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
-    github = {
-      source  = "integrations/github"
-      version = "5.17.0"
-    }
   }
 }
 
 provider "aws" {
   region = "us-east-1"
-}
-
-provider "github" {
-  token = file("github_token")
 }
 
 resource "aws_iam_role" "aws_access" {
@@ -52,7 +44,6 @@ resource "aws_instance" "jenkins-server" {
     Name = var.tag
   }
   user_data = file("jenkins.sh")
-
 }
 
 resource "aws_security_group" "jenkins-sg" {
@@ -67,50 +58,22 @@ resource "aws_security_group" "jenkins-sg" {
     to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     from_port   = 22
     protocol    = "tcp"
     to_port     = 22
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     from_port   = 8080
     protocol    = "tcp"
     to_port     = 8080
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port   = 0
     protocol    = -1
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_s3_bucket" "jenkins-bucket" {
-  bucket = "jenkins-project-2-11-2023"
-
-  tags = {
-    Name = "Jenkins-project"
-  }
-}
-
-resource "aws_s3_bucket_acl" "jenkins-acl" {
-  bucket = aws_s3_bucket.jenkins-bucket.id
-  acl    = "private"
-}
-
-resource "github_repository" "git_repo" {
-  name       = var.project_github_repo_name
-  visibility = "public"
-  auto_init  = true
-}
-
-resource "null_resource" "git_clone" {
-  provisioner "local-exec" {
-    command = "git clone https://github.com/${github_username}/${github_repository.git_repo.name}.git ../${github_repository.git_repo.name}"
   }
 }

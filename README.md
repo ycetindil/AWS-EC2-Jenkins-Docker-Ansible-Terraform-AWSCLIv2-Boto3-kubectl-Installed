@@ -11,6 +11,3 @@ From the page `Manage Jenkins > Manage Plugins`, install Ansible and Terraform p
 
 ## Configuring installed plugins
 From the page `Manage Jenkins > Global Tool Configuration`, add Ansible and Terraform installations by filling out `usr/bin/` to the installation paths.
-
-## Note:
-For the Jenkins-project, `main.tf` file includes GitHub repo and an S3 bucket. Omit these for regular installations.
