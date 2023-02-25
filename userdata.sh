@@ -2,10 +2,10 @@
 yum update -y
 hostnamectl set-hostname jenkins
 
-# Install git
+# Install Git
 yum install git -y
 
-# Install jenkins
+# Install Jenkins
 wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 yum upgrade
@@ -14,7 +14,7 @@ yum install jenkins -y
 systemctl enable jenkins
 systemctl start jenkins
 
-# Install docker
+# Install Docker
 amazon-linux-extras install docker -y
 systemctl start docker
 systemctl enable docker
@@ -30,27 +30,27 @@ systemctl daemon-reload
 systemctl restart docker
 systemctl restart jenkins
 
-# Install docker-compose
+# Install Docker-compose
 curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
 -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-# Uninstall AWS cli v1
+# Uninstall AWS CLI v1
 rm -rf /bin/aws
 
-# Install AWS cli v2
+# Install AWS CLI v2
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 ./aws/install
 
-# Install ansible
+# Install Ansible
 amazon-linux-extras install ansible2 -y
 
-# Install boto3
+# Install Boto3
 yum install pip -y
 pip install boto3 botocore
 
-# Install terraform
+# Install Terraform
 yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 yum -y install terraform

@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_iam_role" "aws_access" {
-  name = "jenkins-role"
+  name = "${var.prefix}-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -29,28 +29,25 @@ resource "aws_iam_role" "aws_access" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess", "arn:aws:iam::aws:policy/AmazonEC2FullAccess", "arn:aws:iam::aws:policy/IAMFullAccess", "arn:aws:iam::aws:policy/AmazonS3FullAccess"]
 }
 
-resource "aws_iam_instance_profile" "jenkins-profile" {
-  name = "jenkins-profile"
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "${var.prefix}-profile"
   role = aws_iam_role.aws_access.name
 }
 
-resource "aws_instance" "jenkins-server" {
-  ami                    = var.myami
-  instance_type          = var.instancetype
-  key_name               = var.mykey
-  vpc_security_group_ids = [aws_security_group.jenkins-sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.jenkins-profile.name
+resource "aws_instance" "ec2_instance" {
+  ami                    = "ami-026b57f3c383c2eec"
+  instance_type          = "t3a.medium"
+  key_name               = var.ssh_key_name
+  vpc_security_group_ids = [aws_security_group.sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
   tags = {
-    Name = var.tag
+    Name = var.prefix
   }
-  user_data = file("jenkins.sh")
+  user_data = file("userdata.sh")
 }
 
-resource "aws_security_group" "jenkins-sg" {
-  name = var.jenkins-sg
-  tags = {
-    Name = var.jenkins-sg
-  }
+resource "aws_security_group" "sg" {
+  name = "${var.prefix}-sg"
 
   ingress {
     from_port   = 80
