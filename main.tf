@@ -23,12 +23,16 @@ resource "aws_instance" "ec2_instance" {
   user_data = data.template_file.userdata.rendered
 }
 
+locals {
+  ingress_ports = [22, 8080]
+}
+
 resource "aws_security_group" "sg" {
   name = "${var.prefix}-sg"
 
   dynamic "ingress" {
-    for_each = var.ingress_ports
-    iterator = "port"
+    for_each = local.ingress_ports
+    iterator = port
     content {
       from_port   = port.value
       protocol    = "tcp"
