@@ -11,6 +11,40 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "aws_instance" "ec2_instance" {
+  ami                    = "ami-026b57f3c383c2eec"
+  instance_type          = "t3a.medium"
+  key_name               = var.ssh_key_name
+  vpc_security_group_ids = [aws_security_group.sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
+  tags = {
+    Name = var.prefix
+  }
+  user_data = data.template_file.userdata.rendered
+}
+
+resource "aws_security_group" "sg" {
+  name = "${var.prefix}-sg"
+
+  dynamic "ingress" {
+    for_each = var.ingress_ports
+    iterator = "port"
+    content {
+      from_port   = port.value
+      protocol    = "tcp"
+      to_port     = port.value
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  egress {
+    from_port   = 0
+    protocol    = -1
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_iam_role" "aws_access" {
   name = "${var.prefix}-role"
   assume_role_policy = jsonencode({
@@ -34,43 +68,6 @@ resource "aws_iam_instance_profile" "instance_profile" {
   role = aws_iam_role.aws_access.name
 }
 
-resource "aws_instance" "ec2_instance" {
-  ami                    = "ami-026b57f3c383c2eec"
-  instance_type          = "t3a.medium"
-  key_name               = var.ssh_key_name
-  vpc_security_group_ids = [aws_security_group.sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
-  tags = {
-    Name = var.prefix
-  }
-  user_data = file("userdata.sh")
-}
-
-resource "aws_security_group" "sg" {
-  name = "${var.prefix}-sg"
-
-  ingress {
-    from_port   = 80
-    protocol    = "tcp"
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 22
-    protocol    = "tcp"
-    to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 8080
-    protocol    = "tcp"
-    to_port     = 8080
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    protocol    = -1
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+data "template_file" "userdata" {
+  template = file("${abspath(path.module)}/userdata.sh")
 }

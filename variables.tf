@@ -9,3 +9,8 @@ variable "ssh_key_name" {
 variable "ssh_private_key_path" {
   default = "~/Documents/DevOps/AWS/"
 }
+
+variable "ingress_ports" {
+  type    = list(number)
+  default = [22, 80, 8080]
+}
