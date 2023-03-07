@@ -51,6 +51,7 @@ resource "aws_security_group" "sg" {
 
 resource "aws_iam_role" "aws_access" {
   name = "${var.prefix}-role"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -64,6 +65,19 @@ resource "aws_iam_role" "aws_access" {
       }
     ]
   })
+
+  inline_policy {
+    name = "eks-policy"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [{
+        Effect: "Allow",
+        Action: ["eks:*"],
+        Resource: "*"
+      }]
+    })
+  }
+
   managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess", "arn:aws:iam::aws:policy/AmazonEC2FullAccess", "arn:aws:iam::aws:policy/IAMFullAccess", "arn:aws:iam::aws:policy/AmazonS3FullAccess"]
 }
 

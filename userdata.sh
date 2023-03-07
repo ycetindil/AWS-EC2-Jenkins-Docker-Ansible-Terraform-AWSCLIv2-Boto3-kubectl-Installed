@@ -54,3 +54,7 @@ pip install boto3 botocore
 yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 yum -y install terraform
+
+# Install Kubectl
+curl https://s3.us-west-2.amazonaws.com/amazon-eks/1.24.10/2023-01-30/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+chmod +x /usr/local/bin/kubectl
