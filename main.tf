@@ -17,10 +17,11 @@ resource "aws_instance" "ec2_instance" {
   key_name               = var.ssh_key_name
   vpc_security_group_ids = [aws_security_group.sg.id]
   iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
+  user_data              = data.template_file.userdata.rendered
+
   tags = {
     Name = var.prefix
   }
-  user_data = data.template_file.userdata.rendered
 }
 
 locals {
@@ -71,9 +72,9 @@ resource "aws_iam_role" "aws_access" {
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [{
-        Effect: "Allow",
-        Action: ["eks:*"],
-        Resource: "*"
+        Effect : "Allow",
+        Action : ["eks:*"],
+        Resource : "*"
       }]
     })
   }

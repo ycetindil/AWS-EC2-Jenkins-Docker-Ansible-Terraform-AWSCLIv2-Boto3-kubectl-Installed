@@ -1,4 +1,4 @@
-# Terraform - EC2: Jenkins, Docker, Ansible, Terraform, AWS CLI v2, Boto3 Installed
+# Terraform - EC2: Jenkins, Docker, Ansible, Terraform, AWS CLI v2, Boto3, Kubectl Installed
 
 ## Obtaining Jenkins password after installation
 SSH into the EC2 and run
